@@ -1,0 +1,82 @@
+*top[3]
+$dat
+$exit
+$i
+$j
+
+@mov -1 clk
+@mov 0 acc
+@mov 0 exit
+@mov 0 &top
+@mov 0 *top
+@mov 1 &top
+@mov 0 *top
+@mov 2 &top
+@mov 0 *top
+
+mov "\n" stdin # read everything up until "\n"
+mov stdin dat
+
+teq dat "\n" # We're at the very last line.
++ mov 1 exit
++ jmp s1
+
+jmp s2
+
+s1: # Section 1: Bubble sort!
+mov 0 i # Set our top-pointer to 0.
+mov 0 j # Set our number of 'failed' swap attempts.
+mov acc dat
+
+sort:
+	mov i &top
+	tgt dat *top
+	+ swp *top dat
+	+ mov 0 j # Reset j and start over with the new value.
+	- inc j
+	inc i
+
+	tgt i 3
+	+ mov 0 i
+
+	tgt j 3 # If we've compared with everything and haven't swapped, stop.
+	- jmp sort
+
+# Reset the state and prepare for section 3.
+mov "" dat
+mov 0 acc
+
+tgt exit 0 # If we're not exiting, continue to sectiom 3.
+- jmp s3
+
+# Compute the sum, print it and leave.
+
+mov 0 &top
+add *top
+mov 1 &top
+add *top
+mov 2 &top
+add *top
+
+mov acc stdout
+mov "\n" stdout
+
+end
+
+s2: # Section 2
+
+# If empty string, then there was two newlines in a row
+teq dat ""
++ jmp s1
+
+s3: # Section 3: ''Parsing''
+
+# There was a number, add it up
+swp dat acc
+cst 0
+add dat
+
+mov "" dat
+
+mov 1 stdin
+mov stdin null    
