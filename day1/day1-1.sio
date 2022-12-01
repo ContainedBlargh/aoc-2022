@@ -1,0 +1,30 @@
+$max
+$dat
+
+mov -1 clk
+@mov 0 acc
+
+mov "\n" stdin # read everything up until "\n"
+mov stdin dat
+
+teq dat "\n"
++ mov max stdout
++ mov "\n" stdout
++ end
+
+# If empty string, then there was two newlines in a row
+teq dat ""
++ mov 0 acc
+
+# There was a number, add it up
+swp dat acc
+cst 0
+add dat
+mov "" dat
+
+# Check if new max reached
+tgt acc max
++ mov acc max
+
+mov 1 stdin
+mov stdin null
