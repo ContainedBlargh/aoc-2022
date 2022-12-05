@@ -1,0 +1,66 @@
+$x1
+$p0
+$p1
+$dat
+$own
+$opt
+$roc
+$pap
+$sci
+$win
+$drw
+
+@mov -1 clk
+
+# Illegal move in the real Shenzhen I/O:
+wait:
+	teq p0 0
+	+ jmp wait
+
+mov p0 dat
+mov 0 p0 # reset pin
+mov 1 p1 # send ok back
+
+teq dat -1 # exit
++ mov roc x1
++ mov pap x1
++ mov sci x1
++ mov drw x1
++ mov win x1
++ end
+
+mov dat acc
+dgt 0
+mov acc own
+mov dat acc
+dgt 1
+mov acc opt
+mov 0 acc
+
+tcp own 2
++ jmp s
+- jmp r
+
+# You picked paper
+inc pap
+teq opt 2 # opponent picked paper
++ inc drw
+teq opt 1 # opponent picked rock
++ inc win
+jmp wait
+
+r: # You picked rock
+	inc roc
+	teq opt 1
+	+ inc drw
+	teq opt 3
+	+ inc win
+	jmp wait
+
+s: # You picked scissors
+	inc sci
+	teq opt 3
+	+ inc drw
+	teq opt 2
+	+ inc win
+

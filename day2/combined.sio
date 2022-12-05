@@ -1,0 +1,62 @@
+$p0             |  $x1             |  $x0
+$p1             |  $p0             |  $x1
+$dat            |  $p1             |  $dat
+                |  $dat            |  @mov -1 clk
+@mov -1 clk     |  $own            |  slx x1
+                |  $opt            |  mov x1 dat
+mov 1 stdin     |  $roc            |  
+mov stdin dat   |  $pap            |  mov x1 acc
+                |  $sci            |  mul 2
+teq dat "\n"    |  $win            |  swp acc dat
++ jmp skip      |  $drw            |  add dat
+                |                  |  mov acc dat
+teq dat null    |  @mov -1 clk     |  
++ mov -1 p0     |                  |  mov x1 acc
++ end           |                  |  add x1
+                |  wait:           |  mul 3
+mov 22 acc      |      teq p0 0    |  swp acc dat
+                |      + jmp wait  |  add dat
+tcp dat "B"     |                  |  mov acc dat
++ add 1         |  mov p0 dat      |  
+- sub 1         |  mov 0 p0        |  mov x1 acc
+                |  mov 1 p1        |  mul 6
+mov 1 stdin     |                  |  swp acc dat
+mov stdin null  |  teq dat -1      |  add dat
+                |  + mov roc x1    |  
+mov 1 stdin     |  + mov pap x1    |  mov acc stdout
+mov stdin dat   |  + mov sci x1    |  mov "\n" stdout
+                |  + mov drw x1    |  
+mov 1 stdin     |  + mov win x1    |  end
+mov stdin null  |  + end           | 
+tcp dat "Y"     |  mov dat acc     | 
++ add 10        |  dgt 0           | 
+- sub 10        |  mov acc own     | 
+                |  mov dat acc     | 
+mov acc p0      |  dgt 1           | 
+wait:           |  mov acc opt     | 
+    teq p1 1    |  mov 0 acc       | 
+    - jmp wait  |                  | 
+                |  tcp own 2       | 
+mov 0 p1        |  + jmp s         | 
+                |  - jmp r         | 
+skip:           |                  | 
+    nop         |  inc pap         |
+                |  teq opt 2       | 
+                |  + inc drw       | 
+                |  teq opt 1       | 
+                |  + inc win       | 
+                |  jmp wait        | 
+                |  r:              | 
+                |      inc roc     | 
+                |      teq opt 1   | 
+                |      + inc drw   | 
+                |      teq opt 3   | 
+                |      + inc win   | 
+                |      jmp wait    | 
+                |  s:              | 
+                |      inc sci     |
+                |      teq opt 3   | 
+                |      + inc drw   | 
+                |      teq opt 2   | 
+                |      + inc win   | 
+                |                  |

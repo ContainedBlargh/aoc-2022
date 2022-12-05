@@ -1,0 +1,134 @@
+$init
+$dat
+$len
+$sum
+$i
+$j
+$prv
+*buf
+*dups
+*ltrs[256]
+*unq
+$x0
+$x1
+
+@mov 1 init
+@mov 0 sum
+@mov -1 clk
+
+tgt init 0
++ jmp setup
+jmp read
+
+compute:
+    mov &unq len
+    mov 0 &unq
+loop:
+    mov *unq acc
+    mov *unq dat
+    cst "c"
+    sub 96
+    tlt acc 0
+    + add 58
+    mov dat stdout
+    mov ": " stdout
+    mov acc stdout
+    mov "\n" stdout
+    swp sum acc
+    add sum
+    swp sum acc
+    inc &unq
+    teq &unq len
+    - jmp loop
+    mov sum stdout
+    mov "\n" stdout
+    end
+
+compare:
+
+mov &dups len
+dec len
+mov 0 &dups
+mov *dups dat
+sort: # Sort the buffer
+    mov *dups x0
+    inc &dups
+    teq &dups len
+    + mov null x0
+    - jmp sort
+
+mov 0 &dups
+slx x1
+copy:
+    mov x1 *dups
+    inc &dups
+    teq &dups len
+    - jmp copy
+
+mov 0 &dups
+mov *dups prv
+inc &dups
+
+dedup: # remove duplicates
+    teq prv *dups
+    - mov *dups prv
+    - mov *dups *unq
+    - inc &unq
+    inc &dups
+    teq &dups len
+    - jmp dedup
+
+jmp read
+
+mov &buf acc
+div 2
+mov acc dat
+mov 0 acc
+mov 0 &buf
+
+left:
+    mov *buf &ltrs
+    inc *ltrs
+    inc &buf
+    teq &buf dat
+    - jmp left
+
+right:
+    inc &buf
+    mov *buf &ltrs
+    tgt *ltrs 0
+    + mov &ltrs acc
+    + cst "c"
+    + mov acc *dups
+    + inc &dups
+    teq &buf len
+    - jmp right
+
+setup:
+    mov 0 &ltrs
+    mov 0 len
+    mov 0 &buf
+fill:
+    mov 0 *ltrs
+    inc &ltrs
+    tlt &ltrs 256
+    + jmp fill
+
+tgt init 0
++ mov 0 init
+
+
+read:
+    mov 1 stdin
+    mov stdin dat
+
+    teq dat "\n"
+    + jmp compare
+
+    teq dat null
+    + jmp compute
+    
+    mov dat acc
+    cst "c"
+    mov acc *buf
+    inc &buf
