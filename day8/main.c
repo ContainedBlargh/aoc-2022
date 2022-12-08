@@ -1,10 +1,8 @@
-#include <ncurses.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 uint16_t size = 0;
 bool **visible = NULL;
